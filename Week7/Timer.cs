@@ -23,6 +23,14 @@ namespace Week7
             }
         }
 
+        public long ElapsedTicks
+        {
+            get
+            {
+                return stopWatch.ElapsedTicks;
+            }
+        }
+
         public Timer Start()
         {
             stopWatch = new Stopwatch();
