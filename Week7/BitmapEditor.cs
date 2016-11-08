@@ -29,14 +29,11 @@ namespace Week7
             if (x > bitmap.Width || y > bitmap.Height)
                 throw new IndexOutOfRangeException();
 
-            var rawColor = color.ToArgb();
-            var offset = bitmapData.Stride * y + x;
-
             switch (bitmapData.PixelFormat)
             {
                 case PixelFormat.Format32bppRgb:
                 case PixelFormat.Format32bppArgb:
-                    *((int*)(ptr + bitmapData.Stride * y) + x) = rawColor;
+                    *((int*)(ptr + bitmapData.Stride * y) + x) = color.ToArgb();
                     break;
                 default:
                     throw new NotImplementedException();

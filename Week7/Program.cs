@@ -26,7 +26,7 @@ namespace Week7
 
             var form = new Form();
             form.Size = bitmap.Size;
-            PictureBox pBox = new PictureBox();
+            var pBox = new PictureBox();
             pBox.Image = bitmapEditor.Bitmap;
             pBox.Size = bitmap.Size;
             form.Controls.Add(pBox);
