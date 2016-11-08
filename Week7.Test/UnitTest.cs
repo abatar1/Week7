@@ -2,6 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Linq;
 
 namespace Week7.Test
 {
@@ -31,35 +34,40 @@ namespace Week7.Test
             Assert.AreEqual(timer.ElapsedSeconds, 3);
         }
 
+        [TestMethod]
         public void BitmapTest()
         {
-            string filename = "";
-            var bitmap = (Bitmap)Image.FromFile(filename);
-
-            var timer1 = new Timer();
-            using (timer1.Start())
+            var assembly = AppDomain.CurrentDomain.GetAssemblies()
+                .SingleOrDefault(a => a.GetName().Name == "Week7");         
+            using (var stream = assembly.GetManifestResourceStream("Week7.example.bmp"))
             {
-                using (var bitmapEditor = new BitmapEditor(bitmap))
+                var bitmap = (Bitmap)Image.FromStream(stream);
+
+                var timer1 = new Timer();
+                using (timer1.Start())
                 {
-                    for (int i = 0; i < bitmapEditor.Height; i++)
-                        for (int j = 0; j < bitmapEditor.Width; j++)
+                    using (var bitmapEditor = new BitmapEditor(bitmap))
+                    {
+                        for (int i = 0; i < bitmapEditor.Height; i++)
+                            for (int j = 0; j < bitmapEditor.Width; j++)
+                            {
+                                bitmapEditor.SetPixel(j, i, Color.FromArgb(0, 0, 0));
+                            }
+                    }
+                }
+
+                var timer2 = new Timer();
+                using (timer2.Start())
+                {
+
+                    for (int i = 0; i < bitmap.Height; i++)
+                        for (int j = 0; j < bitmap.Width; j++)
                         {
-                            bitmapEditor.SetPixel(i, j, Color.FromArgb(255, 255, 255));
+                            bitmap.SetPixel(j, i, Color.FromArgb(0, 0, 0));
                         }
                 }
-            }
-
-            var timer2 = new Timer();
-            using (timer2.Start())
-            {
-                for (int i = 0; i < bitmap.Height; i++)
-                    for (int j = 0; j < bitmap.Width; j++)
-                    {
-                        bitmap.SetPixel(i, j, Color.FromArgb(255, 255, 255));
-                    }
-            }
-
-            Assert.IsTrue(timer1.ElapsedMilliseconds - timer2.ElapsedMilliseconds < 0);
+                Assert.IsTrue(timer1.ElapsedMilliseconds - timer2.ElapsedMilliseconds < 0);
+            }                     
         }
     }
 }
