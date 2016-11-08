@@ -7,9 +7,7 @@ namespace Week7
     public class BitmapEditor : IDisposable
     {
         private BitmapData bitmapData;
-        private Bitmap bitmap;  
-            
-        private IntPtr ptr;
+        private Bitmap bitmap;            
 
         public int Width { get { return bitmap.Width; } }
         public int Height { get { return bitmap.Height; } }
@@ -21,7 +19,6 @@ namespace Week7
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             
             bitmapData = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
-            ptr = bitmapData.Scan0;
         }
 
         public unsafe void SetPixel(int x, int y, Color color)
@@ -29,11 +26,18 @@ namespace Week7
             if (x > bitmap.Width || y > bitmap.Height)
                 throw new IndexOutOfRangeException();
 
+            var ptr = bitmapData.Scan0;
+            var offset = bitmapData.Stride;
+
             switch (bitmapData.PixelFormat)
             {
+                //here comes cases with pixel formats
+                //case PixelFormat.Format16bppRgb:
+                //case PixelFormat.Format24bppRgb:
+                //etc.
                 case PixelFormat.Format32bppRgb:
                 case PixelFormat.Format32bppArgb:
-                    *((int*)(ptr + bitmapData.Stride * y) + x) = color.ToArgb();
+                    *((int*)(ptr + offset * y) + x) = color.ToArgb();
                     break;
                 default:
                     throw new NotImplementedException();
