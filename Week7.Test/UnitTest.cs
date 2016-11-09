@@ -2,8 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Linq;
 
 namespace Week7.Test
@@ -12,7 +10,7 @@ namespace Week7.Test
     public class UnitTest
     {
         [TestMethod]
-        public void TimerTest()
+        public void Timer_SimpleTest()
         {
             var timer = new Timer();
             using (timer.Start())
@@ -35,10 +33,47 @@ namespace Week7.Test
         }
 
         [TestMethod]
-        public void BitmapTest()
+        public void Timer_CallContinueBeforeStart_Exception()
+        {
+            var timer = new Timer();
+            try
+            {
+                using (timer.Continue())
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(2));
+                }
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                if (!(e is TimerNotRunningException))
+                    Assert.Fail();
+            }
+        }
+
+        [TestMethod]
+        public void Timer_StartTest()
+        {
+            var timer = new Timer();
+            using (timer.Start())
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+            }
+            Assert.AreEqual(timer.ElapsedSeconds, 1);
+
+            using (timer.Start())
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(2));
+            }
+            Assert.AreEqual(timer.ElapsedSeconds, 2);
+        }
+
+        [TestMethod]
+        public void Bitmap_TimeTest()
         {
             var assembly = AppDomain.CurrentDomain.GetAssemblies()
                 .SingleOrDefault(a => a.GetName().Name == "Week7");         
+
             using (var stream = assembly.GetManifestResourceStream("Week7.example.bmp"))
             {
                 var bitmap = (Bitmap)Image.FromStream(stream);

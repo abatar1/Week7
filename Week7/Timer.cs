@@ -6,6 +6,7 @@ namespace Week7
     public class Timer : IDisposable 
     {
         private Stopwatch stopWatch;
+        private bool isStarted = false;
 
         public long ElapsedMilliseconds
         {
@@ -33,6 +34,7 @@ namespace Week7
 
         public Timer Start()
         {
+            isStarted = true;
             stopWatch = new Stopwatch();
             stopWatch.Start();
             return this;
@@ -40,6 +42,9 @@ namespace Week7
 
         public Timer Continue()
         {
+            if (!isStarted)
+                throw new TimerNotRunningException();
+
             stopWatch.Start();
             return this;
         }
@@ -53,9 +58,8 @@ namespace Week7
             {
                 if (disposing)
                 {
-                    stopWatch.Stop();                   
+                    stopWatch.Stop();             
                 }
-
                 disposedValue = true;
             }
         }
