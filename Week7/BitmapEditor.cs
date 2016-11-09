@@ -33,8 +33,12 @@ namespace Week7
             switch (bitmapData.PixelFormat)
             {
                 //here comes cases with pixel formats
+                case PixelFormat.Format16bppGrayScale:
+                    var cChar = (char)(0.299 * color.R + 0.587 * color.G + 0.114 * color.B);
+                    Marshal.WriteInt16(ptr + offset + x * 2, cChar);
+                    break;
                 case PixelFormat.Format24bppRgb:
-                    cPtr = Marshal.AllocHGlobal(24);
+                    var cPtr = Marshal.AllocHGlobal(24);
                     Marshal.WriteByte(cPtr, color.B);
                     Marshal.WriteByte(cPtr + 1, color.G);
                     Marshal.WriteByte(cPtr + 2, color.R);
