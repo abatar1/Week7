@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Week7
 {
@@ -21,13 +22,14 @@ namespace Week7
             bitmapData = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
         }
 
-        public unsafe void SetPixel(int x, int y, Color color)
+        public void SetPixel(int x, int y, Color color)
         {
             if (x > bitmap.Width || y > bitmap.Height)
                 throw new IndexOutOfRangeException();
 
             var ptr = bitmapData.Scan0;
             var offset = bitmapData.Stride;
+            var cPtr = new IntPtr(color.ToArgb());
 
             switch (bitmapData.PixelFormat)
             {
@@ -37,7 +39,7 @@ namespace Week7
                 //etc.
                 case PixelFormat.Format32bppRgb:
                 case PixelFormat.Format32bppArgb:
-                    *((int*)(ptr + offset * y) + x) = color.ToArgb();
+                    Marshal.WriteIntPtr(ptr + offset * y + x * 4, cPtr);
                     break;
                 default:
                     throw new NotImplementedException();
