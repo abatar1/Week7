@@ -19,7 +19,7 @@ namespace Week7
             bitmap = new Bitmap(_bitmap);
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-            bitmapData = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
+            bitmapData = bitmap.LockBits(rect, ImageLockMode.ReadWrite, _bitmap.PixelFormat);
         }
        
         public void SetPixel(int x, int y, Color color)
@@ -27,9 +27,10 @@ namespace Week7
             if (x > bitmap.Width || y > bitmap.Height)
                 throw new IndexOutOfRangeException();
 
-            var bColor = new BColor(color, bitmap.PixelFormat);
+            var bColor = new BColor(color, bitmapData.PixelFormat);
             var ptr = bitmapData.Scan0;
             var offset = Math.Abs(bitmapData.Stride) * y + bColor.Size * x;
+
             Marshal.WriteIntPtr(ptr + offset, bColor.Ptr);
         }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 
 namespace Week7
 {
@@ -18,12 +17,12 @@ namespace Week7
             {
                 //here comes cases with pixel formats
                 case PixelFormat.Format16bppGrayScale:
-                    var c16 = (short)((color.R * 31 / 255) << (11) | ((color.G * 63 / 255) << 5) | color.B);
+                    var c16 = (short)(((color.R * 31 / 255) << 11) | ((color.G * 63 / 255) << 5) | color.B);
                     Ptr = new IntPtr(c16);
                     size = 16;
                     break;
                 case PixelFormat.Format24bppRgb:
-                    var c24 = color.ToArgb() << 8;
+                    var c24 = color.ToArgb();
                     Ptr = new IntPtr(c24);
                     size = 24;
                     break;
