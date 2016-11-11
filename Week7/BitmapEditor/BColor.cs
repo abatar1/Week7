@@ -22,7 +22,7 @@ namespace Week7
                     size = 16;
                     break;
                 case PixelFormat.Format24bppRgb:
-                    Ptr = Marshal.UnsafeAddrOfPinnedArrayElement(new byte[] { color.B, color.G, color.R }, 0);
+                    Marshal.Copy(Ptr, new byte[] { color.B, color.G, color.R }, 0, size);
                     size = 24;
                     break;
                 case PixelFormat.Format32bppRgb:
