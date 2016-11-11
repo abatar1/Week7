@@ -28,8 +28,9 @@ namespace Week7
                 throw new IndexOutOfRangeException();
 
             var bColor = new BColor(color, bitmap.PixelFormat);
-            var ptr = bitmapData.Scan0 + Math.Abs(bitmapData.Stride) * y + bColor.Size * x;
-            Marshal.WriteIntPtr(ptr, bColor.Ptr);
+            var ptr = bitmapData.Scan0;
+            var offset = Math.Abs(bitmapData.Stride) * y + bColor.Size * x;
+            Marshal.WriteIntPtr(ptr + offset, bColor.Ptr);
         }
 
         #region IDisposable Support
