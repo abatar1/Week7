@@ -13,21 +13,24 @@ namespace Week7
         public int Size { get { return size / 8; } }
 
         public BColor(Color color, PixelFormat pixelFormat)
-        {
+        {           
             switch (pixelFormat)
             {
                 //here comes cases with pixel formats
                 case PixelFormat.Format16bppGrayScale:
-                    Ptr = new IntPtr((char)(0.299 * color.R + 0.587 * color.G + 0.114 * color.B));
+                    var c16 = (short)((color.R * 31 / 255) << (11) | ((color.G * 63 / 255) << 5) | color.B);
+                    Ptr = new IntPtr(c16);
                     size = 16;
                     break;
                 case PixelFormat.Format24bppRgb:
-                    Marshal.Copy(Ptr, new byte[] { color.B, color.G, color.R }, 0, size);
+                    var c24 = color.ToArgb() << 8;
+                    Ptr = new IntPtr(c24);
                     size = 24;
                     break;
                 case PixelFormat.Format32bppRgb:
                 case PixelFormat.Format32bppArgb:
-                    Ptr = new IntPtr(color.ToArgb());
+                    var c32 = color.ToArgb();
+                    Ptr = new IntPtr(c32);
                     size = 32;
                     break;
                 default:
