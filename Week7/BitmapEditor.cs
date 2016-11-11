@@ -8,7 +8,7 @@ namespace Week7
     public class BitmapEditor : IDisposable
     {
         private BitmapData bitmapData;
-        private Bitmap bitmap;            
+        private Bitmap bitmap;
 
         public int Width { get { return bitmap.Width; } }
         public int Height { get { return bitmap.Height; } }
@@ -18,40 +18,18 @@ namespace Week7
         {
             bitmap = new Bitmap(_bitmap);
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
-            
+
             bitmapData = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
         }
-
+       
         public void SetPixel(int x, int y, Color color)
         {
             if (x > bitmap.Width || y > bitmap.Height)
                 throw new IndexOutOfRangeException();
 
-            var ptr = bitmapData.Scan0;
-            var offset = bitmapData.Stride * y;
-
-            switch (bitmapData.PixelFormat)
-            {
-                //here comes cases with pixel formats
-                case PixelFormat.Format16bppGrayScale:
-                    var cChar = (char)(0.299 * color.R + 0.587 * color.G + 0.114 * color.B);
-                    Marshal.WriteInt16(ptr + offset + x * 2, cChar);
-                    break;
-                case PixelFormat.Format24bppRgb:
-                    var cPtr = Marshal.AllocHGlobal(24);
-                    Marshal.WriteByte(cPtr, color.B);
-                    Marshal.WriteByte(cPtr + 1, color.G);
-                    Marshal.WriteByte(cPtr + 2, color.R);
-                    Marshal.WriteIntPtr(ptr + offset + x * 3, cPtr);
-                    Marshal.FreeHGlobal(cPtr);
-                    break;
-                case PixelFormat.Format32bppRgb:                
-                case PixelFormat.Format32bppArgb:
-                    Marshal.WriteInt32(ptr + offset + x * 4, color.ToArgb());
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+            var bColor = new BColor(color, bitmap.PixelFormat);
+            var ptr = bitmapData.Scan0 + Math.Abs(bitmapData.Stride) * y + bColor.Size * x;
+            Marshal.WriteIntPtr(ptr, bColor.Ptr);
         }
 
         #region IDisposable Support
