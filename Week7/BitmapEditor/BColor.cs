@@ -6,13 +6,11 @@ using System.Runtime.InteropServices;
 namespace Week7
 {
     public class BColor
-    {
-        public IntPtr Ptr { get; }
+    {       
         private int size;
-        public int Size {
-            get { return size / 8; }
-            private set { size = value; }
-        }
+
+        public IntPtr Ptr { get; }
+        public int Size { get { return size / 8; } }
 
         public BColor(Color color, PixelFormat pixelFormat)
         {
